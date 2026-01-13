@@ -1,0 +1,186 @@
+﻿@using System.Globalization
+@using WorkCalendarCreator.Models
+@inject ConstructorData _constructorData
+@inject IJSRuntime JSRuntime
+<MudGrid Spacing="3">
+    <!-- Выбор года -->
+    @* <MudItem xs="12" Class="d-flex justify-center mb-4">
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudIconButton Icon="@Icons.Material.Rounded.ArrowLeft" OnClick="() => CurrentYear--" Size="Size.Large"></MudIconButton>
+            <MudText Typo="Typo.h5" Class="mx-4">@CurrentYear</MudText>
+            <MudIconButton Icon="@Icons.Material.Rounded.ArrowRight" OnClick="() => CurrentYear++" Size="Size.Large"></MudIconButton>
+        </MudStack>
+        
+    </MudItem> *@
+
+    <!-- Отображение всех месяцев -->
+    @foreach (var month in Enumerable.Range(1, 12))
+    {
+        var weeks = GetWeeksForMonth(CurrentYear, month);
+        <MudItem xs="12" sm="6" md="4" lg="4" Class="mb-1">
+            <MudPaper  Elevation="5" Style="height:276px" Class="pa-2">
+                <MudStack Spacing="1" StretchItems="StretchItems.End">
+                    <MudText Typo="Typo.subtitle2" Align="Align.Center">@Culture.DateTimeFormat.GetMonthName(month)</MudText>
+                    <MudSimpleTable Outlined Dense Hover Bordered Style="overflow-x: auto;">
+                        <thead>
+                            <tr>
+                                @foreach (var dayName in WeekDayNames)
+                                {
+                                    <th style="text-align:center; padding: 4px;">@dayName</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var week in weeks)
+                            {
+                                <tr>
+                                    @foreach (var day in week)
+                                    {
+                                        @if (day == null)
+                                        {
+                                            <td style="padding: 2px;"></td>
+                                        }
+                                        else
+                                        {
+                                            var isWeekend = IsWeekend(day.Value);
+                                            var isSelected = SelectedDates.Contains(day.Value.Date);
+                                            var isToday = day.Value.Date == DateTime.Today;
+                                            var isCurrentMonth = day.Value.Month == month;
+
+                                            <td style="padding: 2px; text-align: center;">
+                                                <MudIconButton OnClick="() => ToggleDateSelection(day.Value)"
+                                                               Color="isSelected ? Color.Primary : (isToday ? Color.Default : Color.Default)"
+                                                               Variant="isSelected ? Variant.Filled : Variant.Text"
+                                                               Disabled="!isCurrentMonth"
+                                                               Class="@(isWeekend ? "mud-calendar-weekend mud-width-full rounded-0" : "mud-width-full rounded-0")"
+                                                               Title="@day.Value.ToString("dd.MM.yyyy")"
+                                                               Style="height: 28px;">
+                                                    @day.Value.Day
+                                                </MudIconButton>
+                                            </td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                </MudStack>
+
+            </MudPaper>
+
+        </MudItem>
+    }
+
+    <!-- Кнопка выбора выходных -->
+    <MudItem xs="12" Class="mt-4 d-flex justify-center">
+        <MudButton Color="Color.Secondary" OnClick="SelectAllWeekends">Выбрать все выходные</MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public ConstructorSettings CurrentConstructorSettings { get; set; } 
+    [Parameter]
+    public EventCallback<ConstructorSettings> CurrentConstructorSettingsChanged { get; set; }
+
+    public int CurrentYear { get; set; } = DateTime.Today.Year;
+    public int CurrentMonth { get; set; } = DateTime.Today.Month;
+    public HashSet<DateTime> SelectedDates { get; set; } = new();
+    public DayOfWeek[] WeekendDays { get; set; } = new[] { DayOfWeek.Saturday, DayOfWeek.Sunday };
+
+    public CultureInfo Culture { get; set; } = new CultureInfo("en-US");
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        await base.OnInitializedAsync();
+    }  
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // if (firstRender)
+        // {
+        //     var currentCulture = await JSRuntime.InvokeAsync<string>("getBrowserCulture");
+        //     Culture = new CultureInfo(currentCulture);
+        // }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    
+
+    private string[] WeekDayNames => Enumerable.Range(0, 7)
+    .Select(i =>
+    {
+        var day = (DayOfWeek)(((int)CurrentConstructorSettings.WeekStart + i) % 7);
+        return Culture.DateTimeFormat.GetShortestDayName(day);
+    })
+    .ToArray();
+
+    private List<List<DateTime?>> GetWeeksForMonth(int year, int month)
+    {
+        var firstDay = new DateTime(year, month, 1);
+        var lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+        var firstDayOfWeek = CurrentConstructorSettings.WeekStart;
+
+        
+        // Найти начало первой недели
+        var start = firstDay;
+        while (start.DayOfWeek != firstDayOfWeek)
+        {
+            start = start.AddDays(-1);
+        }
+
+        // Найти конец последней недели
+        var end = lastDay;
+        var lastDayOfWeek = (DayOfWeek)(((int)firstDayOfWeek + 6) % 7);
+        while (end.DayOfWeek != lastDayOfWeek)
+        {
+            end = end.AddDays(1);
+        }
+
+        var weeks = new List<List<DateTime?>>();
+        var current = start;
+
+        while (current <= end)
+        {
+            var week = new List<DateTime?>();
+            for (int i = 0; i < 7; i++)
+            {
+                week.Add(current.Month == month ? current : null);
+                current = current.AddDays(1);
+            }
+            weeks.Add(week);
+        }
+
+        return weeks;
+    }
+
+    private void ToggleDateSelection(DateTime date)
+    {
+        var dateOnly = date.Date;
+        if (SelectedDates.Contains(dateOnly))
+            SelectedDates.Remove(dateOnly);
+        else
+            SelectedDates.Add(dateOnly);
+    }
+
+    private bool IsWeekend(DateTime date) => WeekendDays.Contains(date.DayOfWeek);
+
+    private void SelectAllWeekends()
+    {
+        IEnumerable<DateTime> candidates;
+
+        candidates = Enumerable.Range(1, 12)
+                .SelectMany(m => GetDaysInMonth(CurrentYear, m));
+
+        var weekends = candidates.Where(IsWeekend).Select(d => d.Date);
+        foreach (var day in weekends)
+        {
+            SelectedDates.Add(day);
+        }
+    }
+    private List<DateTime> GetDaysInMonth(int year, int month)
+    {
+        int days = DateTime.DaysInMonth(year, month);
+        return Enumerable.Range(1, days).Select(d => new DateTime(year, month, d)).ToList();
+    }
+}

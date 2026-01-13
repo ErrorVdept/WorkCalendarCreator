@@ -1,0 +1,160 @@
+﻿@using WorkCalendarCreator.Models
+@inject ConstructorData _constructorData
+<MudPaper Outlined Class="mud-width-full pa-2">
+
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.h6">Control Panel</MudText>
+        <MudStack Row Spacing="0">
+            <MudNumericField T="int" Value="CurrentConstructorSettings.Year" ValueChanged="YearChanged" Label="Год" Min="1980" Max="2100" Variant="Variant.Outlined" />
+            <MudButton Size="Size.Small" Variant="Variant.Filled">Новый проект</MudButton>
+        </MudStack>
+        @* // TODO обработчик *@
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.body1">Пресеты</MudText>
+            <MudSelect Label="Готовые проекты" Margin="Margin.Dense" T="string" Class="mud-width-full" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("Pizza")" Disabled="true">2023</MudSelectItem>
+                <MudSelectItem Value="@("Burger")">2024</MudSelectItem>
+                <MudSelectItem Value="@("Hotdog")">2025</MudSelectItem>
+                <MudSelectItem Value="@("Hotdog")">2026</MudSelectItem>
+            </MudSelect>
+        </MudStack>
+        <MudStack StretchItems="StretchItems.StartAndEnd" Row Spacing="2">
+            <MudButton Size="Size.Small" Variant="Variant.Filled">Загрузить из списка</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled">Загрузить из файла</MudButton>
+        </MudStack>
+        @* Конструктор *@
+        <MudText Typo="Typo.h6">Управление конструктором</MudText>
+        <MudDivider Class="mud-width-full" />
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.body1">Выходные</MudText>
+            <MudStack StretchItems="StretchItems.StartAndEnd" Row Spacing="2">
+                <MudButton Size="Size.Small" Variant="Variant.Filled">Отметить все выходные</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Filled">Отменить выделение выходных</MudButton>
+            </MudStack>
+        </MudStack>
+        <MudDivider Class="mud-width-full" />
+        <MudText Typo="Typo.body1">Начало недели</MudText>
+        <MudSelect Value="CurrentConstructorSettings.WeekStart" ValueChanged="WeekStartChanged" Margin="Margin.Dense" T="DayOfWeek" Class="mud-width-full" Variant="Variant.Outlined">
+            <MudSelectItem Value="@DayOfWeek.Monday">Понедельник</MudSelectItem>
+            <MudSelectItem Value="@DayOfWeek.Sunday">Воскресенье</MudSelectItem>
+        </MudSelect>
+        @* Экспорт *@
+        <MudText Typo="Typo.h6">Управление экспортом</MudText>
+        <MudDivider Class="mud-width-full" />
+        <MudText Typo="Typo.body1">Формат экспорта</MudText>
+        <MudSelect Value="CurrentConstructorSettings.ExportFormat" ValueChanged="ExportFormatChanged" Margin="Margin.Dense" T="ExportFormat" Class="mud-width-full" Variant="Variant.Outlined">
+            @foreach (var data in _constructorData.ExportFormats)
+            {
+                <MudSelectItem Value="data">@data.NameKey</MudSelectItem>
+            }
+            @* <MudSelectItem Value="data">JSON (только выходные и праздники)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">JSON (полный календарь)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">XML (только выходные и праздники)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">XML (полный календарь)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">CSV (только выходные и праздники)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">CSV (полный календарь)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">TXT (выходные и праздники построчно)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">TXT (выходные и праздники через запятую)</MudSelectItem> *@
+        </MudSelect>
+        <MudButton Variant="Variant.Filled">Предпросмотр формата</MudButton>
+        <MudDivider Class="mud-width-full" />
+        <MudText Typo="Typo.body1">Формат даты</MudText>
+        <MudSelect Value="CurrentConstructorSettings.DateFormat" ValueChanged="DateFormatChanged" Margin="Margin.Dense" T="DateFormat" Class="mud-width-full" Variant="Variant.Outlined">
+            @foreach (var data in _constructorData.DateFormats)
+            {
+                <MudSelectItem Value="data">@data.NameKey</MudSelectItem>
+            }
+            @* <MudSelectItem Value="@("Pizza")" Disabled="true">Unix Timestamp (s) (1768234245)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Unix Timestamp (ms) (1768234245123)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Date (YYYY-MM-DD)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Date (DD/MM/YYYY)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Date (MM/DD/YYYY)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Date (DD.MM.YYYY)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Date (MM.DD.YYYY)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime - ISO 8601 (YYYY-MM-DDTHH:mm:ssZ)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY.MM.DD HH:mm:ss)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY-MM-DD HH:mm:ss)</MudSelectItem>
+
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY.MM.DD HH:mm:ss)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY-MM-DD HH:mm:ss)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY.MM.DD HH:mm:ss)</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Datetime (YYYY-MM-DD HH:mm:ss)</MudSelectItem> *@
+        </MudSelect>
+        <MudText Typo="Typo.body1">Часовой пояс (опционально)</MudText>
+        <MudText Typo="Typo.subtitle2">Используется только для формата с часовым поясом</MudText>
+        <MudSelect Value="CurrentConstructorSettings.TimeZone" ValueChanged="TimeZoneChanged" Margin="Margin.Dense" T="TimeZoneVariant" Class="mud-width-full" Variant="Variant.Outlined">
+            @foreach (var data in _constructorData.TimeZoneVariants)
+            {
+                <MudSelectItem Value="data">@data.Name</MudSelectItem>
+            }
+            @* <MudSelectItem Value="@("Pizza")" Disabled="true">-1</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-2</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-3</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-4</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-5</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-6</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-7</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-8</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-9</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-10</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">-11</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">UTC</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+1</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+2</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+3</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+4</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+5</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+6</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+7</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+8</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+9</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+10</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+11</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">+12</MudSelectItem> *@
+        </MudSelect>
+        <MudDivider Class="mud-width-full" />
+        <MudStack StretchItems="StretchItems.StartAndEnd" Spacing="2">
+            <MudButton Size="Size.Small" DropShadow="false" Variant="Variant.Filled">Предпросмотр</MudButton>
+            <MudButton Size="Size.Small" DropShadow="false" Variant="Variant.Filled">Экспорт</MudButton>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+
+
+
+
+
+
+@code {
+    [Parameter]
+    public ConstructorSettings CurrentConstructorSettings { get; set; }
+    [Parameter]
+    public EventCallback<ConstructorSettings> CurrentConstructorSettingsChanged { get; set; }
+
+    private async Task YearChanged(int value)
+    {
+        var updated = CurrentConstructorSettings with { Year = value };
+        await CurrentConstructorSettingsChanged.InvokeAsync(updated);
+    }
+    private async Task WeekStartChanged(DayOfWeek value)
+    {
+        var updated = CurrentConstructorSettings with { WeekStart = value };
+        await CurrentConstructorSettingsChanged.InvokeAsync(updated);
+    }
+    private async Task ExportFormatChanged(ExportFormat value)
+    {
+        var updated = CurrentConstructorSettings with { ExportFormat = value };
+        await CurrentConstructorSettingsChanged.InvokeAsync(updated);
+    }
+    private async Task DateFormatChanged(DateFormat value)
+    {
+        var updated = CurrentConstructorSettings with { DateFormat = value };
+        await CurrentConstructorSettingsChanged.InvokeAsync(updated);
+    }
+    private async Task TimeZoneChanged(TimeZoneVariant value)
+    {
+        var updated = CurrentConstructorSettings with { TimeZone = value };
+        await CurrentConstructorSettingsChanged.InvokeAsync(updated);
+    }
+}
