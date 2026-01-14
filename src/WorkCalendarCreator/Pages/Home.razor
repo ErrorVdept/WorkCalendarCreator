@@ -2,27 +2,52 @@
 @using WorkCalendarCreator.CustomControls
 @using WorkCalendarCreator.Models
 @using System.Globalization
+@using WorkCalendarCreator.Services
 @inject ConstructorData _constructorData
+@inject CalendarGenerator _generator
 @inject IJSRuntime JSRuntime
-<PageTitle>Home</PageTitle>
+<PageTitle>WCC</PageTitle>
 
 <MudGrid Spacing="2">
     <MudItem xs="12" sm="6" md="4">
-        <LeftComplexPanel @bind-CurrentConstructorSettings="@_constructorSettings"></LeftComplexPanel>
+        <LeftComplexPanel OnGenerateResultRequested="GenerateResult" OnShowPreviewRequested="OpenExample" OnClearFullClickRequested="ClearAll" OnClearDayOffClickRequested="ClearWeekends" OnFillDayOffClickRequested="FillDays" @bind-CurrentConstructorSettings="@_constructorSettings"></LeftComplexPanel>
+        <MudOverlay DarkBackground="true" Absolute="false" AutoClose="false" @bind-Visible="_showExample">
+            <MudPaper Class="mud-width-full pa-2 " Style="min-width:350px">
+                <MudStack>
+                    <MudStack Row StretchItems="StretchItems.Start" AlignItems="AlignItems.Center">
+                        <MudText Typo="Typo.h5">
+                            @_constructorSettings.ExportFormat.NameKey
+                        </MudText>
+                        <MudIconButton OnClick="CloseExample" Icon="@Icons.Material.Rounded.Close" />
+                    </MudStack>
+                    <MudTextField @bind-Value="_constructorSettings.ExportFormat.Example" T="string" Lines="12" Variant="Variant.Filled" ReadOnly />
+                </MudStack>
+            </MudPaper>
+        </MudOverlay>
     </MudItem>
     <MudItem xs="12" sm="6" md="8">
-        <WorkCalendar @bind-CurrentConstructorSettings="_constructorSettings"></WorkCalendar>
+        <WorkCalendar @ref="_workCalendar" @bind-CurrentConstructorSettings="_constructorSettings"></WorkCalendar>
     </MudItem>
     
 </MudGrid>
 
 @code {
-    
+
     private ConstructorSettings _constructorSettings = ConstructorSettings.CreateDefault();
     private CultureInfo _browserCulture = new CultureInfo("en-US");
+    public WorkCalendar? _workCalendar { get; set; }
+
+    private bool _showExample = false;
     protected override async Task OnInitializedAsync()
     {
-        
+        _constructorSettings = new ConstructorSettings(
+            Year: DateTime.Now.Year,
+            ReadyProjectFilename: null,
+            WeekStart: DayOfWeek.Monday,
+            ExportFormat: _constructorData.ExportFormats.First(f => f.NameKey == "JSON"),
+            DateFormat: _constructorData.DateFormats.First(f => f.NameKey == "ISO8601"),
+            TimeZone: _constructorData.TimeZoneVariants.First(tz => tz.Name == "UTC")
+        );
         await base.OnInitializedAsync();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,9 +60,51 @@
         //     CultureInfo.DefaultThreadCurrentUICulture = _browserCulture;
         //     await _workCalendar.Rerender(_constructorSettings);
         // }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
-    
-    
+
+    private async Task GenerateResult()
+    {
+        var data = await _generator.GenerateCalendar(_constructorSettings, _workCalendar.SelectedWeekends, _workCalendar.SelectedHolidays);
+
+        string fileName = $"weekendCalendar_{_constructorSettings.Year}";
+        switch (_constructorSettings.ExportFormat.NameKey)
+        {
+            case "JSON":
+                fileName += ".json";
+                break;
+            case "XML":
+                fileName += ".xml";
+                break;
+            case "CSV":
+                fileName += ".csv";
+                break;
+        }
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, data);
+    }
+
+    private void ClearAll()
+    {
+        _workCalendar.ClearAll();
+    }
+    private void ClearWeekends()
+    {
+        _workCalendar.ClearWeekends();
+    }
+    private void FillDays()
+    {
+        _workCalendar.SelectAllWeekends();
+        //_constructorSettings.DateFormat = _constructorData.DateFormats.First(p => p.NameKey == "ISO8601");
+    }
+
+    private void OpenExample()
+    {
+        _showExample = true;
+    }
+    private void CloseExample()
+    {
+        _showExample = false;
+    }
+
 }

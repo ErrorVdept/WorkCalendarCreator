@@ -3,11 +3,14 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<PageTitle>WCC</PageTitle>
 <MudLayout>
-    <MudAppBar>
-        Work Calendar Creator
+    <MudAppBar Elevation="1" Dense Class="rounded-lg mt-2">
+        <MudImage Src="LOGO.png" Width="35"/>
+        <MudSpacer />
+        <MudIconButton Href="https://github.com/ErrorVdept/WorkCalendarCreator" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
-    <MudMainContent Class="mt-4 mx-2">
+    <MudMainContent Class="mt-6 mx-2">
         @Body
     </MudMainContent>
 </MudLayout>

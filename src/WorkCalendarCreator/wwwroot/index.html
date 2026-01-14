@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WorkCalendarCreator</title>
+    <title>WCC</title>
     <base href="/" />
     <link rel="preload" id="webassembly" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -21,11 +21,7 @@
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <span class="loader"></span>
     </div>
 
     <div id="blazor-error-ui">
@@ -36,6 +32,7 @@
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
     <script src="browserCulture.js"></script>
+    <script src="downloadFileFromStream.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js?v=1"></script>
 </body>
 

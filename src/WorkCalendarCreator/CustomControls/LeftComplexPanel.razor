@@ -4,14 +4,15 @@
 
     <MudStack Spacing="1">
         <MudText Typo="Typo.h6">Control Panel</MudText>
-        <MudStack Row Spacing="0">
-            <MudNumericField T="int" Value="CurrentConstructorSettings.Year" ValueChanged="YearChanged" Label="Год" Min="1980" Max="2100" Variant="Variant.Outlined" />
-            <MudButton Size="Size.Small" Variant="Variant.Filled">Новый проект</MudButton>
+        <MudStack Row Spacing="0" AlignItems="AlignItems.Center">
+            
+            <MudNumericField Margin="Margin.Dense" T="int" Value="CurrentConstructorSettings.Year" ValueChanged="YearChanged" Label="Год" Min="1980" Max="2100" Variant="Variant.Outlined" />
+            
         </MudStack>
         @* // TODO обработчик *@
         <MudStack Spacing="0">
             <MudText Typo="Typo.body1">Пресеты</MudText>
-            <MudSelect Label="Готовые проекты" Margin="Margin.Dense" T="string" Class="mud-width-full" Variant="Variant.Outlined">
+            <MudSelect Label="Готовые проекты" Disabled Margin="Margin.Dense" T="string" Class="mud-width-full" Variant="Variant.Outlined">
                 <MudSelectItem Value="@("Pizza")" Disabled="true">2023</MudSelectItem>
                 <MudSelectItem Value="@("Burger")">2024</MudSelectItem>
                 <MudSelectItem Value="@("Hotdog")">2025</MudSelectItem>
@@ -20,16 +21,18 @@
         </MudStack>
         <MudStack StretchItems="StretchItems.StartAndEnd" Row Spacing="2">
             <MudButton Size="Size.Small" Variant="Variant.Filled">Загрузить из списка</MudButton>
-            <MudButton Size="Size.Small" Variant="Variant.Filled">Загрузить из файла</MudButton>
         </MudStack>
         @* Конструктор *@
         <MudText Typo="Typo.h6">Управление конструктором</MudText>
         <MudDivider Class="mud-width-full" />
-        <MudStack Spacing="0">
+        <MudStack Spacing="2">
             <MudText Typo="Typo.body1">Выходные</MudText>
+            <MudStack Spacing="0" >
+                <MudButton OnClick="OnFillDayOffClick" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Отметить все выходные</MudButton>
+            </MudStack>
             <MudStack StretchItems="StretchItems.StartAndEnd" Row Spacing="2">
-                <MudButton Size="Size.Small" Variant="Variant.Filled">Отметить все выходные</MudButton>
-                <MudButton Size="Size.Small" Variant="Variant.Filled">Отменить выделение выходных</MudButton>
+                <MudButton OnClick="OnClearDayOffClick" Size="Size.Small" Variant="Variant.Filled">Отменить выделение выходных</MudButton>
+                <MudButton OnClick="OnClearFullClick" Size="Size.Small" Variant="Variant.Filled">Отменить выделение всех</MudButton>
             </MudStack>
         </MudStack>
         <MudDivider Class="mud-width-full" />
@@ -56,7 +59,7 @@
             <MudSelectItem Value="@("Pizza")" Disabled="true">TXT (выходные и праздники построчно)</MudSelectItem>
             <MudSelectItem Value="@("Pizza")" Disabled="true">TXT (выходные и праздники через запятую)</MudSelectItem> *@
         </MudSelect>
-        <MudButton Variant="Variant.Filled">Предпросмотр формата</MudButton>
+        <MudButton OnClick="OnShowPreview" Variant="Variant.Filled">Предпросмотр формата</MudButton>
         <MudDivider Class="mud-width-full" />
         <MudText Typo="Typo.body1">Формат даты</MudText>
         <MudSelect Value="CurrentConstructorSettings.DateFormat" ValueChanged="DateFormatChanged" Margin="Margin.Dense" T="DateFormat" Class="mud-width-full" Variant="Variant.Outlined">
@@ -114,8 +117,7 @@
         </MudSelect>
         <MudDivider Class="mud-width-full" />
         <MudStack StretchItems="StretchItems.StartAndEnd" Spacing="2">
-            <MudButton Size="Size.Small" DropShadow="false" Variant="Variant.Filled">Предпросмотр</MudButton>
-            <MudButton Size="Size.Small" DropShadow="false" Variant="Variant.Filled">Экспорт</MudButton>
+            <MudButton OnClick="OnGenerateResult" Size="Size.Small" DropShadow="false" Color="Color.Primary" Variant="Variant.Filled">Экспорт</MudButton>
         </MudStack>
     </MudStack>
 </MudPaper>
@@ -127,11 +129,43 @@
 
 
 @code {
+
+
     [Parameter]
     public ConstructorSettings CurrentConstructorSettings { get; set; }
     [Parameter]
     public EventCallback<ConstructorSettings> CurrentConstructorSettingsChanged { get; set; }
-
+    // Заполнение выходных
+    [Parameter] public EventCallback OnFillDayOffClickRequested { get; set; }
+    private async Task OnFillDayOffClick()
+    {
+        await OnFillDayOffClickRequested.InvokeAsync();
+    }
+    //отчистка выходных
+    [Parameter] public EventCallback OnClearDayOffClickRequested { get; set; }
+    private async Task OnClearDayOffClick()
+    {
+        await OnClearDayOffClickRequested.InvokeAsync();
+    }
+    //отчистка всего
+    [Parameter] public EventCallback OnClearFullClickRequested { get; set; }
+    private async Task OnClearFullClick()
+    {
+        await OnClearFullClickRequested.InvokeAsync();
+    }
+    //Предпросмотр формата
+    [Parameter] public EventCallback OnShowPreviewRequested { get; set; }
+    private async Task OnShowPreview()
+    {
+        await OnShowPreviewRequested.InvokeAsync();
+    }
+    //Предпросмотр формата
+    [Parameter] public EventCallback OnGenerateResultRequested { get; set; }
+    private async Task OnGenerateResult()
+    {
+        await OnGenerateResultRequested.InvokeAsync();
+    }
+    //ИЗМЕНЕНИЯ ПОЛЕЙ
     private async Task YearChanged(int value)
     {
         var updated = CurrentConstructorSettings with { Year = value };

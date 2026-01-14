@@ -24,7 +24,7 @@ public record ConstructorSettings(
         Year: DateTime.Now.Year,
         ReadyProjectFilename: null,
         WeekStart: DayOfWeek.Monday,
-        ExportFormat: new ExportFormat() { NameKey = "JSON" }, // ← укажите ваш дефолт
+        ExportFormat: new ExportFormat() { NameKey = "JSON", Example = "{\n }" }, // ← укажите ваш дефолт
         DateFormat: new DateFormat() { NameKey = "ISO8601", Value = "ISO8601" },  // ← укажите ваш дефолт
         TimeZone: new TimeZoneVariant() { Name = "UTC", Value = "Z" }
     );
