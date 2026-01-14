@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	  <BlazorWebAssemblyDisableImplicitSri>true</BlazorWebAssemblyDisableImplicitSri>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,28 +26,5 @@
   </ItemGroup>
 
 
-	<Target Name="FixBaseHref" AfterTargets="Publish">
-		<PropertyGroup>
-			<IndexHtmlPath>$(PublishDir)wwwroot\index.html</IndexHtmlPath>
-			<IndexHtmlPath Condition="'$(OS)' != 'Windows_NT'">$(PublishDir)wwwroot/index.html</IndexHtmlPath>
-		</PropertyGroup>
-
-		<ReadLinesFromFile File="$(IndexHtmlPath)">
-			<Output TaskParameter="Lines" ItemName="IndexLines" />
-		</ReadLinesFromFile>
-
-		<ItemGroup>
-			<ModifiedIndexLines Include="@(IndexLines)">
-				<ReplacedLine>$([System.Text.RegularExpressions.Regex]::Replace('%(Identity)', '&lt;base href=&quot;/&quot; /&gt;', '&lt;base href=&quot;/WorkCalendarCreator/&quot; /&gt;'))</ReplacedLine>
-			</ModifiedIndexLines>
-		</ItemGroup>
-
-		<WriteLinesToFile
-		  File="$(IndexHtmlPath)"
-		  Lines="@(ModifiedIndexLines->'%(ReplacedLine)')"
-		  Overwrite="true"
-		  Encoding="UTF-8" />
-
-		<Message Text="✅ Base href заменён на /WorkCalendarCreator/ в $(IndexHtmlPath)" Importance="high" />
-	</Target>
+	
 </Project>
