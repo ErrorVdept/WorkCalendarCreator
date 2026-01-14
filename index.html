@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WCC</title>
+    <base href="/" />
+    <link href="_framework/dotnet.5vgjtn0grs.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-3yqHOp/jwVPTb1N/nzxznMmdTo/O4KmUglD2rzmlSpQ=" />
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="WorkCalendarCreator.styles.css" rel="stylesheet" />
+    <link href="manifest.webmanifest" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <script type="importmap">{
+  "imports": {
+    "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.66stpp682q.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.5vgjtn0grs.js",
+    "./_framework/dotnet.native.js": "./_framework/dotnet.native.r9jnhio7iy.js",
+    "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.0j6ezsi0n0.js"
+  },
+  "scopes": {},
+  "integrity": {
+    "./_framework/blazor.webassembly.66stpp682q.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
+    "./_framework/blazor.webassembly.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
+    "./_framework/dotnet.5vgjtn0grs.js": "sha256-3yqHOp/jwVPTb1N/nzxznMmdTo/O4KmUglD2rzmlSpQ=",
+    "./_framework/dotnet.js": "sha256-3yqHOp/jwVPTb1N/nzxznMmdTo/O4KmUglD2rzmlSpQ=",
+    "./_framework/dotnet.native.js": "sha256-TzpbR4nFJhhkiPKzQA9B81vpLVuQzVjH7xyta+432Yw=",
+    "./_framework/dotnet.native.r9jnhio7iy.js": "sha256-TzpbR4nFJhhkiPKzQA9B81vpLVuQzVjH7xyta+432Yw=",
+    "./_framework/dotnet.runtime.0j6ezsi0n0.js": "sha256-jCsbbdXoVd1zzGc0fQT2sz4mKuv0ANdurPVGo5Sc2jg=",
+    "./_framework/dotnet.runtime.js": "sha256-jCsbbdXoVd1zzGc0fQT2sz4mKuv0ANdurPVGo5Sc2jg="
+  }
+}</script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css?v=1" rel="stylesheet" />
+    <script>
+        (function () {
+            var redirect = sessionStorage.redirect;
+            delete sessionStorage.redirect;
+            if (redirect && redirect !== location.href) {
+                history.replaceState(null, null, redirect);
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <span class="loader"></span>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly.66stpp682q.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
+    <script src="browserCulture.js"></script>
+    <script src="downloadFileFromStream.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js?v=1"></script>
+</body>
+
+</html>
