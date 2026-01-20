@@ -209,7 +209,7 @@
         IEnumerable<DateTime> candidates;
 
         candidates = Enumerable.Range(1, 12)
-                .SelectMany(m => GetDaysInMonth(CurrentYear, m));
+                .SelectMany(m => GetDaysInMonth(CurrentConstructorSettings.Year, m));
 
         var weekends = candidates.Where(IsWeekend).Select(d => d.Date);
         foreach (var day in weekends)
